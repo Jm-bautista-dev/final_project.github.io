@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title>Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <header class="l-header">
+        <nav class="nav bd-grid">
+            <div>
+                <a href="#" class="nav__logo">Welcome, {{ name }}!</a>
+            </div>
+            <div class="nav__menu" id="nav-menu">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="{{ url_for('home') }}" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="{{ url_for('logout') }}" class="nav__link" onclick="confirmLogout(event)">Logout</a></li>
+
+                </ul>
+            </div>
+            <div class="nav__icons">
+                <a href="{{ url_for('settings') }}" class="nav__icon"><i class="fas fa-cog"></i></a>
+                <div class="nav__toggle" id="nav-toggle">
+                    <i class='bx bx-menu'></i>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="l-main">
+        <section class="profile section" id="profile">
+            <h2 class="section-title">Profile</h2>
+            <div class="profile__container bd-grid">
+                <div class="profile__img">
+                    <img src="{{ url_for('static', filename='uploads/' + profile_pic) }}" alt="Profile Picture">
+                </div>
+                <div class="profile__info">
+                    <h3>{{ name }}</h3>
+                    <p>{{ email }}</p>
+                </div>
+            </div>
+            <form action="{{ url_for('upload_profile_pic') }}" method="post" enctype="multipart/form-data" class="profile__form">
+                <label for="profile_pic" class="profile__label">
+                    <i class="fas fa-camera"></i> Upload
+                </label>
+                <input type="file" name="profile_pic" id="profile_pic" class="profile__input" required>
+                <input type="submit" value="Upload" class="profile__button button">
+            </form>
+            
+        </section>
+        
+        <section class="settings section" id="settings">
+            <h2 class="section-title">Settings</h2>
+            <div class="settings__container bd-grid">
+                <form action="{{ url_for('settings') }}" method="post" class="settings__form">
+                    <input type="text" name="name" value="{{ name }}" class="settings__input" required>
+                    <input type="email" name="email" value="{{ email }}" class="settings__input" required>
+                    <input type="submit" name="update" value="Update" class="settings__button button">
+                    <input type="submit" name="delete" value="Delete Account" class="settings__button button">
+                </form>
+                <p>{{ msg }}</p>
+                {% if accounts %}
+<h3>All Accounts</h3>
+<table class="admin__table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for account in accounts %}
+        <tr>
+            <td>{{ account.id }}</td>
+            <td>
+                <form action="{{ url_for('update_account_name', id=account.id) }}" method="POST" style="display:inline;">
+                    <input type="text" name="name" value="{{ account.name }}" class="settings__input" required>
+                    <button class="settings__button button" type="submit">Update Name</button>
+                </form>
+            </td>
+            <td>
+                <form action="{{ url_for('update_account_email', id=account.id) }}" method="POST" style="display:inline;">
+                    <input type="email" name="email" value="{{ account.email }}" class="settings__input" required>
+                    <button class="settings__button button" type="submit">Update Email</button>
+                </form>
+            </td>
+            <td>
+                <form action="{{ url_for('delete_account', id=account.id) }}" method="POST" style="display:inline;">
+                    <button class="settings__button button" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p class="footer__title">Michael</p>
+        <div class="footer__social">
+            <a href="#" class="footer__icon"><i class='bx bxl-facebook'></i></a>
+            <a href="#" class="footer__icon"><i class='bx bxl-instagram'></i></a>
+            <a href="#" class="footer__icon"><i class='bx bxl-twitter'></i></a>
+        </div>
+        <p class="footer__copy">©jm-bautista-dev. All rights reserved</p>
+    </footer>
+    <script>
+        function confirmLogout(event) {
+            if (confirm('Are you sure you want to log out?')) {
+                window.location.href = "{{ url_for('logout') }}";
+            } else {
+                event.preventDefault();
+            }
+        }
+    </script>
+
+</body>
+</html>
